@@ -2,6 +2,7 @@
 //#include "LM335.h"
 #include "Moonlite.h"
 #include "StepperControl_A4988.h"
+#include "ESP32Encoder.h"
 
 //#include <U8x8lib.h>
 //#include <U8g2lib.h>
@@ -14,6 +15,9 @@ const int stepMode3    = 27;
 const int stepMode2    = 14;
 const int stepMode1    = 12;
 const int enablePin    = 13;
+
+const int encoderPin1  = 2;
+const int encoderPin2  = 15;
 
 //const int temperatureSensorPin = 3;
 
@@ -30,6 +34,7 @@ StepperControl_A4988 Motor(stepPin,
                            sleepPin,
                            resetPin);
 Moonlite SerialProtocol;
+ESP32Encoder encoder;
 
 // Declaration of the display
 //U8G2_SSD1306_128X64_NONAME_1_HW_I2C Display(U8G2_R0);
@@ -38,9 +43,10 @@ float temp = 0;
 long pos = 0;
 bool pageIsRefreshing = false;
 
+hw_timer_t * timer = NULL;
+
 void processCommand()
 {
-  MoonliteCommand_t command;
   switch (SerialProtocol.getCommand().commandID)
   {
     case ML_C:
@@ -154,11 +160,15 @@ void processCommand()
       break;
     case ML_SN:
       // Set the target position
-      Motor.setTargetPosition(SerialProtocol.getCommand().parameter);
+      long position = SerialProtocol.getCommand().parameter;
+      encoder.setCount(position);
+      Motor.setTargetPosition(position);
       break;
     case ML_SP:
       // Set the current motor position
-      Motor.setCurrentPosition(SerialProtocol.getCommand().parameter);
+      long position = SerialProtocol.getCommand().parameter;
+      encoder.setCount(position);
+      Motor.setCurrentPosition(position);
       break;
     case ML_PLUS:
       // Activate temperature compensation focusing
@@ -187,11 +197,44 @@ void setup()
 
   // Set the motor speed to a valid value for Moonlite
   Motor.setSpeed(7000);
+  Motor.setStepMode(SC_SIXTEENTH_STEP);
   Motor.setMoveMode(SC_MOVEMODE_SMOOTH);
-  //Motor.setMoveMode(SC_MOVEMODE_PER_STEP);
+  // Motor.setMoveMode(SC_MOVEMODE_PER_STEP);
 
   timestamp = millis();
   //displayTimestamp = millis();
+
+  SetupEncoder();
+}
+
+void SetupEncoder()
+{
+  delay(1);
+  // Enable the weak pull down resistors
+	ESP32Encoder::useInternalWeakPullResistors=true;
+  // set starting count value
+	encoder.clearCount();
+  // Attach pins for use as encoder pins
+	encoder.attachSingleEdge(encoderPin1, encoderPin2);
+}
+
+void HandleHandController()
+{
+  long targetPosition = Motor.getTargetPosition();
+  long encoderPosition = encoder.getCount();
+  Motor.setTargetPosition(encoderPosition);  
+  if(targetPosition != encoderPosition)
+  {
+    Motor.goToTargetPosition();
+  }
+  /*if (!Motor.isInMove())
+  {
+    Motor.goToTargetPosition();
+  }
+  while(Motor.isInMove())
+  {
+    Motor.Manage();
+  }*/
 }
 
 void loop()
@@ -207,6 +250,10 @@ void loop()
       timestamp = millis();
     }
   }
+
+
+  HandleHandController();
+
   Motor.Manage();
   SerialProtocol.Manage();
 
@@ -214,6 +261,8 @@ void loop()
   {
     processCommand();
   }
+
+
 
 //  if ((millis() - displayTimestamp) >= 1000 && !Motor.isInMove())
 //  {
