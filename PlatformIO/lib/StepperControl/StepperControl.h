@@ -37,18 +37,17 @@ along with StepperControl library.  If not, see <http://www.gnu.org/licenses/>.
 #define SC_CLOCKWISE 0
 #define SC_COUNTER_CLOCKWISE 1
 
-#define SC_FULL_STEP 0
-#define SC_HALF_STEP 4
-#define SC_QUATER_STEP 2
-#define SC_EIGHTH_STEP 6
-#define SC_SIXTEENTH_STEP 7
+// TMC2209 constants:
+#define SC_8TH_STEP 0
+#define SC_16TH_STEP 2
+#define SC_32TH_STEP 1
+#define SC_64TH_STEP 3
 
 #define SC_MAX_SPEED 1000000
-#define SC_MAX_SPEED_FULL_STEP 1000
-#define SC_MAX_SPEED_HALF_STEP 6000
-#define SC_MAX_SPEED_QUATER_STEP 6000
-#define SC_MAX_SPEED_EIGHTH_STEP 7000
-#define SC_MAX_SPEED_SIXTEENTH_STEP 7000
+#define SC_MAX_SPEED_8TH_STEP 3000
+#define SC_MAX_SPEED_16TH_STEP 5000
+#define SC_MAX_SPEED_32TH_STEP 10000
+#define SC_MAX_SPEED_64TH_STEP 20000
 
 #define SC_MOVEMODE_PER_STEP 0
 #define SC_MOVEMODE_SMOOTH 1
@@ -57,13 +56,13 @@ along with StepperControl library.  If not, see <http://www.gnu.org/licenses/>.
 
 #define SC_DEFAULT_SPEED 1000
 
-class StepperControl_A4988
+class StepperControl
 {
  public:
   //DEBUG
   long dbg_correction;
   // Constructors:
-  StepperControl_A4988(int stepPin,
+  StepperControl(int stepPin,
 			int directionPin,
 			int stepModePin1,
 			int stepModePin2,
@@ -79,7 +78,6 @@ class StepperControl_A4988
   void setStepMode(int stepMode);
   void setMoveMode(int moveMode);
   void setSpeed(unsigned int speed);
-  void setBrakeMode(int state);
   void setTemperatureCompensationCoefficient(int coef);
   void setCurrentTemperature(float temperature);
 
@@ -90,7 +88,6 @@ class StepperControl_A4988
   int getStepMode();
   int getMoveMode();
   unsigned int getSpeed();
-  int getBrakeMode();
   int getTemperatureCompensationCoefficient();
 
   // Other public members
@@ -123,7 +120,7 @@ class StepperControl_A4988
   bool temperatureCompensationIsInit;
   float currentTemperature;
 
-  unsigned long timestamp;
+  unsigned long lastMovementTimestamp;
   unsigned long accelTimestamp;
 
   int stepPin;
