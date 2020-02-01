@@ -79,7 +79,7 @@ class Moonlite
   // Other public members
   void init(int baudRate);
   int isNewCommandAvailable();
-  int Manage();
+  void Manage();
 
  private:
   MoonliteCommand_t currentCommand;

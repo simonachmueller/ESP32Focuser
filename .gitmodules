@@ -1,0 +1,3 @@
+[submodule "PlatformIO/lib/ESP32Encoder"]
+	path = PlatformIO/lib/ESP32Encoder
+	url = https://github.com/madhephaestus/ESP32Encoder.git

@@ -61,7 +61,6 @@ void Moonlite::setAnswer(int nbChar, long answer)
 {
   int i;
   int unknownFormat = false;
-  int messageLength = 0;
 
   // Initialisation of the output buffer
   for (i = 0; i < ML_OUTPUT_BUFFER_SIZE; i++)
@@ -93,7 +92,7 @@ int Moonlite::isNewCommandAvailable()
   return newCommandIsAvailable;
 }
 
-int Moonlite::Manage()
+void Moonlite::Manage()
 {
   // This procedure should be called regularly.
   // It fills the input buffer with the caracter recived from the Serial port
