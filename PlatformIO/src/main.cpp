@@ -2,7 +2,7 @@
 //#include "LM335.h"
 #include "Moonlite.h"
 #include "StepperControl.h"
-#include "ESP32Encoder.h"
+#include <ESP32Encoder.h>
 
 //#include <U8x8lib.h>
 //#include <U8g2lib.h>
@@ -194,7 +194,7 @@ void SetupEncoder()
 {
   delay(1);
   // Enable the weak pull down resistors
-	ESP32Encoder::useInternalWeakPullResistors=true;
+	ESP32Encoder::useInternalWeakPullResistors=UP;
   // set starting count value
 	encoder.clearCount();
   // Attach pins for use as encoder pins
