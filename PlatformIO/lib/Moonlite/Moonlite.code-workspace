@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"name": "190925-211044-bluepill_f103c8_128k",
+			"path": "/home/semen/Documents/PlatformIO/Projects/190925-211044-bluepill_f103c8_128k"
+		}
+	],
+	"settings": {
+		"terminal.integrated.env.linux": {
+			"PATH": "/home/semen/.platformio/penv/bin:/home/semen/.platformio/penv:/home/semen/adb-fastboot/platform-tools:/home/semen/bin:/home/semen/adb-fastboot/platform-tools:/home/semen/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/semen/.dotnet/tools:/home/semen/mycroft-core/bin:/home/semen/.dotnet/tools:/home/semen/mycroft-core/bin",
+			"PLATFORMIO_CALLER": "vscode"
+		}
+	}
+}
