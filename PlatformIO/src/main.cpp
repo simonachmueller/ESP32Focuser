@@ -22,12 +22,13 @@ const int encoderPin2  = 15;
 #define RXD2 16
 #define TXD2 17
 
-const int encoderMotorstepsRelation = 5;
+const int encoderMotorstepsRelation = 20;
 
 //const int temperatureSensorPin = 3;
 
 unsigned long timestamp;
 unsigned long displayTimestamp;
+unsigned long lastMovementTimestamp;
 
 //LM335 TemperatureSensor(temperatureSensorPin);
 StepperControl Motor(stepPin,
@@ -40,6 +41,7 @@ StepperControl Motor(stepPin,
                            resetPin);
 Moonlite SerialProtocol;
 ESP32Encoder encoder;
+long lastEncoderPosition = 0;
 
 // Declaration of the display
 //U8G2_SSD1306_128X64_NONAME_1_HW_I2C Display(U8G2_R0);
@@ -218,6 +220,7 @@ void setup()
 
   timestamp = millis();
   //displayTimestamp = millis();
+  lastMovementTimestamp = millis();
 
   SetupEncoder();
 }
@@ -225,7 +228,14 @@ void setup()
 void HandleHandController()
 {
   long targetPosition = Motor.getTargetPosition();
-  long encoderPosition = encoder.getCount() / encoderMotorstepsRelation;
+  long encoderCurrentPosition = encoder.getCount();
+  long encoderDiff = encoderCurrentPosition - lastEncoderPosition;
+  long stepCount = encoderDiff * log(abs(encoderDiff) + 1) / encoderMotorstepsRelation;
+  
+  long encoderPosition = encoderCurrentPosition + stepCount;
+  encoder.setCount(encoderPosition);
+  lastEncoderPosition = encoderPosition;
+
   Motor.setTargetPosition(encoderPosition);  
   if(targetPosition != encoderPosition)
   {
