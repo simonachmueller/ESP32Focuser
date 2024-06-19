@@ -1,5 +1,5 @@
 # ESP32Focuser
-Build status ![PlatformIO CI](https://github.com/semenmiroshnichenko/ESP32Focuser/workflows/PlatformIO%20CI/badge.svg)
+Build status ![PlatformIO CI](https://github.com/simonachmueller/ESP32Focuser/workflows/PlatformIO%20CI/badge.svg)
 
 Focuser for astronomy telescope based on ESP32 controller. Comportable with Indilib (http://indilib.org/) and ASCOM (https://ascom-standards.org/).
 The controller uses the protocol Moonlite (as documented in the indilib project).
@@ -9,7 +9,7 @@ This is a port of an awesome code from https://github.com/Hansastro/Focuser to E
 1. It uses an optical rotary encoder connected to pins 2 and 15 as a handcontroller, which helps manually focus your telescope on a not-really-stable mounts. The encoder focusing control feels very direct and highly resolved (because it has about 1:5 reduction). 
 
 # Hardware
-If you want to build a focuser controller by yourself, please check out a hardware repository https://github.com/semenmiroshnichenko/ESP32Focuser-hardware
+If you want to build a focuser controller by yourself, please check out a hardware repository https://github.com/simonachmueller/ESP32Focuser-hardware
 
 # Installation for computer-controlled use
 ## Windows
