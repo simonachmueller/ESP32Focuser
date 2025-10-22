@@ -194,7 +194,7 @@ void SetupEncoder()
 {
   delay(1);
   // Enable the weak pull down resistors
-	ESP32Encoder::useInternalWeakPullResistors=UP;
+	ESP32Encoder::useInternalWeakPullResistors = puType::up;
   // set starting count value
 	encoder.clearCount();
   // Attach pins for use as encoder pins
