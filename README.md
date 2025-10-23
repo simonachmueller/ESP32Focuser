@@ -6,7 +6,8 @@ The controller uses the protocol Moonlite (as documented in the indilib project)
 
 This is a port of an awesome code from https://github.com/Hansastro/Focuser to ESP32 platform with some additions:
 1. It uses TMC2209 stepper motor driver (because it's cool and really silent).
-1. It uses an optical rotary encoder connected to pins 2 and 15 as a handcontroller, which helps manually focus your telescope on a not-really-stable mounts. The encoder focusing control feels very direct and highly resolved (because it has about 1:5 reduction). 
+1. It uses an optical rotary encoder connected to pins 2 and 15 as a handcontroller, which helps manually focus your telescope on a not-really-stable mounts. The encoder focusing control feels very direct and highly resolved (because it has about 1:5 reduction).
+1. **Variable speed encoder control** - inspired by https://github.com/semenmiroshnichenko/Superfok, the encoder now uses a logarithmic speed multiplier that adjusts the motor steps based on rotation speed. Fast encoder rotations result in more motor steps per encoder step, providing both precision for fine adjustments and speed for coarse adjustments. 
 
 # Hardware
 If you want to build a focuser controller by yourself, please check out a hardware repository https://github.com/simonachmueller/ESP32Focuser-hardware

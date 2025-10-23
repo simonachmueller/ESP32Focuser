@@ -29,6 +29,10 @@ const int encoderMotorstepsRelation = 5;
 unsigned long timestamp;
 unsigned long displayTimestamp;
 
+// Variables for variable speed encoder handling
+long lastEncoderCount = 0;
+long virtualMotorPosition = 0;  // Accumulated motor position with speed adjustments
+
 //LM335 TemperatureSensor(temperatureSensorPin);
 StepperControl Motor(stepPin,
                            directionPin,
@@ -166,11 +170,15 @@ void processCommand()
     case ML_SN:
       // Set the target position
       encoder.setCount(SerialProtocol.getCommand().parameter * encoderMotorstepsRelation);
+      lastEncoderCount = encoder.getCount();
+      virtualMotorPosition = SerialProtocol.getCommand().parameter;
       Motor.setTargetPosition(SerialProtocol.getCommand().parameter);
       break;
     case ML_SP:
       // Set the current motor position
       encoder.setCount(SerialProtocol.getCommand().parameter * encoderMotorstepsRelation);
+      lastEncoderCount = encoder.getCount();
+      virtualMotorPosition = SerialProtocol.getCommand().parameter;
       Motor.setCurrentPosition(SerialProtocol.getCommand().parameter);
       break;
     case ML_PLUS:
@@ -220,14 +228,50 @@ void setup()
   //displayTimestamp = millis();
 
   SetupEncoder();
+  
+  // Initialize tracking variables
+  lastEncoderCount = encoder.getCount();
+  virtualMotorPosition = Motor.getCurrentPosition();
 }
 
 void HandleHandController()
 {
   long targetPosition = Motor.getTargetPosition();
-  long encoderPosition = encoder.getCount() / encoderMotorstepsRelation;
-  Motor.setTargetPosition(encoderPosition);  
-  if(targetPosition != encoderPosition)
+  long currentEncoderCount = encoder.getCount();
+  
+  // Calculate encoder change since last call
+  long encoderDelta = currentEncoderCount - lastEncoderCount;
+  
+  if (encoderDelta != 0)
+  {
+    // Calculate speed multiplier using logarithmic function similar to Superfok
+    // This makes fast rotations result in more motor steps per encoder step
+    long absEncoderDelta = abs(encoderDelta);
+    
+    // Apply logarithmic scaling: log(n+1) gives smooth acceleration
+    // For absEncoderDelta=1: log(2)≈0.69, for 5: log(6)≈1.79, for 10: log(11)≈2.4
+    float speedMultiplier = log((float)(absEncoderDelta + 1));
+    
+    // Calculate motor steps with speed multiplier
+    // Base relation * encoder change * speed multiplier
+    long motorSteps = (long)(encoderMotorstepsRelation * absEncoderDelta * speedMultiplier);
+    
+    // Apply direction
+    if (encoderDelta > 0)
+    {
+      virtualMotorPosition += motorSteps;
+    }
+    else
+    {
+      virtualMotorPosition -= motorSteps;
+    }
+    
+    // Update tracking variable
+    lastEncoderCount = currentEncoderCount;
+  }
+  
+  Motor.setTargetPosition(virtualMotorPosition);  
+  if(targetPosition != virtualMotorPosition)
   {
     Motor.goToTargetPosition();
   }
