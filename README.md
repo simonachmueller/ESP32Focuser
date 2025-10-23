@@ -11,6 +11,13 @@ This is a port of an awesome code from https://github.com/Hansastro/Focuser to E
 # Hardware
 If you want to build a focuser controller by yourself, please check out a hardware repository https://github.com/simonachmueller/ESP32Focuser-hardware
 
+# Firmware Upload
+To upload firmware to your ESP32 microcontroller, see the detailed [Firmware Upload Guide](FIRMWARE_UPLOAD.md). The guide covers multiple upload methods including:
+- Using PlatformIO (recommended for developers)
+- Using esptool.py for pre-built binaries
+- Using Arduino IDE
+- Troubleshooting common issues
+
 # Installation for computer-controlled use
 ## Windows
 1. Install CP210x driver from https://www.silabs.com/products/development-tools/software/usb-to-uart-bridge-vcp-drivers if not installed automatically by windows itself
